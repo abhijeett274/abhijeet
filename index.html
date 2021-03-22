@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Idealabs Future Tech Venture</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+    <link href="/favicon.ico" type="image/x-icon" rel="icon" />
+
+</head>
+<body>
+    <div class="container">
+
+        <h1>Voteing system</h1>
+      
+        <h2 id="instructor"></h2>
+
+        <label for="name" class="col-lg-2 control-label">Enroll Candidate</label>
+		<input id="c_address" type="text">
+		
+		<button id="Eroll_Button">Enroll Now</button>
+
+        <label for="name" class="col-lg-2 control-label">Vote for Candidate</label>
+		<input id="candidate_vote_id" type="text">
+		
+		<button id="Vote_button">Vote Now</button>
+
+	
+		<button id="list_button">Print List of Candidate</button>
+
+		
+        <label for="name" class="col-lg-2 control-label">Total Vote for Candidate</label>
+		<input id="total_vote_id" type="text">
+		
+		<button id="total_vote_button">Vote Count</button>
+
+        <label for="name" class="col-lg-2 control-label">Validate Candidate</label>
+		<input id="Validate_candidate_id" type="text">
+		
+		<button id="Validate_candidate_button">Check</button>
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+       if (typeof web3 !== 'undefined') {
+           web3 = new Web3(web3.currentProvider);
+       } else {
+           web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+       }
+
+
+
+       web3.eth.defaultAccount = web3.eth.accounts[0];
+
+       var votingContract = web3.eth.contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "List",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "candidate",
+				"type": "uint256"
+			}
+		],
+		"name": "voteForCandidate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "printList",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "candidate",
+				"type": "uint256"
+			}
+		],
+		"name": "totalVotesFor",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "candidate",
+				"type": "uint256"
+			}
+		],
+		"name": "validCandidate",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+
+       var Voting = votingContract.at('0xcC281F466469eB8678005752280cdfEeEF2561F6');
+
+	   $("#list_button").click(function() {
+
+		Voting.printList(function(error, result) {
+           if (!error) {
+			for(i=0;i<result.length;i++){
+               $("#instructor").append(result[i]+'<br/>');
+			   console.log(result[i]);
+			   }
+			   console.log(result);
+           } else
+                console.log(error);
+       });
+	});
+
+       $("#Eroll_Button").click(function() {
+           
+        Voting.List($("#c_address").val(), (err, res) => {
+        if (err){
+            console.log(err);
+            }    
+        })
+            
+		});
+		
+		$("#total_vote_button").click(function() {
+           
+		   Voting.totalVotesFor	($("#total_vote_id").val(), (err, res) => {
+		   if (err){
+			   console.log(err);
+			   }    
+		   })
+			   
+		   });
+   
+	   $("#total_vote_button").click(function() {
+           
+		   Voting.totalVotesFor($("#total_vote_id").val(), (err, res) => {
+		   if (err){
+			   console.log(err);
+			   }    
+		   else {
+			$("#instructor").html(res.c);
+			console.log(res.c)
+		   }
+			})
+			   
+	  });  
+	  
+	  $("#Vote_button").click(function() {
+           
+		   Voting.voteForCandidate($("#candidate_vote_id").val(), (err, res) => {
+		   if (err){
+			   console.log(err);
+			   }    
+		   else {
+			console.log(res)
+		   }
+			})
+			   
+	  }); 
+
+       
+	  $("#Validate_candidate_button").click(function() {
+           
+		   Voting.validCandidate($("#Validate_candidate_id").val(), (err, res) => {
+		   if (err){
+			   console.log(err);
+			   }    
+		   else {
+			$("#instructor").html(res);
+			console.log(res)
+		   }
+			})
+			   
+	  });
+
+    </script>
+
+</body>
+</html>

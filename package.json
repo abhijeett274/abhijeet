@@ -1,0 +1,16 @@
+{
+  "name": "idealabs",
+  "version": "1.0.0",
+  "description": "this is my project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lite-server"
+  },
+  "author": "kartikey",
+  "license": "ISC",
+  "dependencies": {
+    "lite-server": "^2.4.0",
+    "web3": "^0.20.7"
+  }
+}
